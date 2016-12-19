@@ -26,7 +26,8 @@ The folder structure is:
 There will be 2 modes of operation to create the movie list - controlled by the **use_api** variable, whose default value is **False**:
 
 + mode 1: use_api = False : The movie list is created manually
-+ mode 2: use_api = True : Currently, this does not function
++ mode 2: use_api = True : This will call REST API on TMDB.org. It needs an api key to function
++ mode 2: if you want to use the API, then please register your own key with TMDB and update API_KEY
 
 #### fresh_tomatoes.py
 
@@ -34,3 +35,4 @@ Some changes have been made to the baseline file provided by Udacity, namely:
 
 + Imported font from googlefont api (lato)
 + Changed image display size and added title for each image to display movie story line
++ Changed the writing of title and storyline to encode in UTF-8
