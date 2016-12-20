@@ -8,10 +8,12 @@ A project to create a single webpage which lists movie information
 # import the movie class and webpage generator
 import media
 import fresh_tomatoes
+
+# import http connection library and a json library
 import httplib
 import json
 
-# api key for tmdb - if this is not provided, then it won't work...
+# api key for tmdb - to be replaced by individual's key in string format "key"...
 API_KEY = None
 
 # a switch to determine whether to use the film API
@@ -23,31 +25,38 @@ if API_KEY is None:
     
 # function to create a movie object using TMDB - if use_api=True
 def create_movie_from_tmdb(movie_id):
-    # do get_details against tmdb
+    # create a connection object to the API provider
     conn = httplib.HTTPSConnection("api.themoviedb.org")
     payload = "{}"
+    
+    # create a request string to the API's get_details method for movies
     rq_string = "/3/movie/"+movie_id+"?language=en-US&api_key=" + API_KEY
+    
+    # send the request, get the response
     conn.request("GET", rq_string, payload)
     res = conn.getresponse()
+    
+    # create a json/dictionary format of the returned text response
     data = json.loads(res.read())
     
     # parse response and extract overview and title and poster path
     movie_title = data["original_title"]    
     movie_storyline = data["tagline"]
     movie_image = "https://image.tmdb.org/t/p/w500"+data["poster_path"]
-    # use get_videos to get youtube url
+    
+    # use get_videos to get youtube url and process the response as before
     rq_string = "/3/movie/"+movie_id+"/videos?language=en-US&api_key=" + API_KEY
     conn.request("GET", rq_string, payload)
     res = conn.getresponse()
     data = json.loads(res.read())
     
     movie_video = "https://www.youtube.com/watch?v="+data["results"][0]["key"]
-   # create a movie object
+    
+    # create a movie object with the collected information
     movie = media.Movie(movie_title,movie_storyline,movie_image,
                         movie_video)
                         
-    print movie_title, movie_storyline, movie_image, movie_video
-    
+    # return the created movie object                        
     return movie
 
 # create an empty list to hold the movie objects
@@ -55,7 +64,7 @@ movies = []
 
 # create the movie objects manually or using the API
 if use_api:
-    # Ids for movies were pre-checked...
+    # add movies to the list using the API function. The Ids were looked up manually.
     movies.append(create_movie_from_tmdb("194"))
     movies.append(create_movie_from_tmdb("110"))
     movies.append(create_movie_from_tmdb("28162"))
@@ -64,7 +73,7 @@ if use_api:
     movies.append(create_movie_from_tmdb("406"))
 
 else:
-    # create the movie list manually
+    # create the movie list manually by calling the movie class __init__ for each movie
     movies.append(media.Movie("Jungle Book",
     "Meet Mowgli, the man cub. Baloo thinks he'll make a darn good bear. Shere Khan thinks he'll make a darn good meal",
     "https://upload.wikimedia.org/wikipedia/en/1/1d/Thejunglebook_movieposter.jpg",
@@ -95,5 +104,5 @@ else:
     "https://upload.wikimedia.org/wikipedia/en/5/53/Amelie_poster.jpg",
     "https://www.youtube.com/watch?v=HUECWi5pX7o"))    
     
-# call the webpage generator for the move list
+# call the webpage generator for the movie list
 fresh_tomatoes.open_movies_page(movies)
